@@ -52,12 +52,13 @@
 
 请不断探索目录结构以确认乐队成员
 
-```
+```text
 最终可以通过以下步骤来到正确的目录下：
 ls
 cd Millsage
 ls
 cd SETSUNA
+```
 ---
 
 ## 🎯 获取 FLAG
