@@ -26,17 +26,18 @@
 
 ### 1. 错误命令反馈
 
-输入非法命令时会返回随机提示：
+输入非法命令时（希望你没有尝试一键速通哦）会返回随机提示：
 
 - 错误的指令desuwa
 - 你这家伙在说什么呢？
 - 不存在的指令，zako~
+然后题目会断开连接来惩罚你！
 
 ---
 
 ### 2. 输入长度限制
 
-如果输入过长：
+如果输入过长则会提示：
 
 ```text
 你不乘哦
@@ -48,22 +49,19 @@
 
 ## 🪜 解题步骤
 
-不断尝试目录结构：
+请不断探索目录结构以确认乐队成员
 
 ```
+最终可以通过以下步骤来到正确的目录下：
 ls
-cd xxx
+cd Millsage
 ls
-cd ..
-```
-
-通过反复探索找到正确路径。
-
+cd SETSUNA
 ---
 
 ## 🎯 获取 FLAG
 
-进入目标目录后即可获得：
+进入目标目录后输入 cat flag即可获得：
 
 ```
 flag{millsage_intruder_xxxxxxxx}
@@ -81,9 +79,9 @@ flag{millsage_intruder_xxxxxxxx}
 
 ---
 
-# 🥈 第二题 WP（MyGO 追逐战）
+# 🥈 第二题 WP（小祥 追逐战）
 
-# 🥈 MyGO 追逐战 - Writeup
+# 🥈 小祥 追逐战 - Writeup
 
 ## 📌 题目考点
 
@@ -103,51 +101,57 @@ flag{millsage_intruder_xxxxxxxx}
 
 ## ⚙️ 栈结构示例
 
-题目会给出类似：
+题目会给出类似例子：
 
 ```text
 buf: 0x40
 rbp: 0x8
 ```
 
----
-
-## 🧠 解题核心
-
-计算偏移量：
-
-```
-偏移 = buf + rbp
-```
-
-例如：
-
-```
-0x40 + 0x8 = 0x48
-```
-
----
-
 ## 🪜 解题步骤
 
 ### Step 1：QTE
 
-输入：
+前四轮：
 
 ```
-F
+15s内输入 F（f） 即可
 ```
 
 最后一轮：
 
 ```
-E
+15s内输入 E（e） 即可
 ```
 
 ### Step 2：输入偏移
 
 ```
-0x48
+第一轮：
+  buf       @ rbp-0x40
+  hit       @ rbp-0x8
+  saved rbp @ rbp+0x0
+  ret       @ rbp+0x8
+所以结果就是 0x40-0x8 = 56（十进制表示结果）
+第二轮同理：
+  buf       @ rbp-0x50
+  hit       @ rbp-0x10
+  saved rbp @ rbp+0x0
+  ret       @ rbp+0x8
+所以结果就是 0x50-0x10 = 64
+第三轮：
+  buf       @ rbp-0x38
+  hit       @ rbp-0x4
+  saved rbp @ rbp+0x0
+  ret       @ rbp+0x8
+结果为 0x38-0x4 = 52
+第四轮
+  buf       @ rbp-0x48
+  hit       @ rbp-0xc
+  saved rbp @ rbp+0x0
+  ret       @ rbp+0x8
+结果为 0x48-0xc = 60
+
 ```
 
 ---
@@ -156,28 +160,28 @@ E
 
 以下任一情况都会失败：
 
-- QTE未完成
-- 偏移错误
-- 超时
+- QTE未完成（按错或者15s内未完成）
+- 偏移值计算错误
+- 每一轮作答超时（超过90s没有完成一轮作答）
 
 ---
 
 ## 🏁 成功条件
 
-连续4轮全部正确：
+连续4轮全部正确且完成QTE即可获取flag：
 
 ```
-flag{uuid-xxxx-xxxx}
+flag{xxxxxxxxxxxxxxxxxxxx}
 ```
 
 ---
 
 ## 💡 总结
 
-本题本质是：
+本题本质其实是栈偏移的计算（16进制）：
 
 ```
-偏移 = buf + rbp
+偏移量 = hit - buf
 ```
 
 属于 PWN 入门题。
@@ -199,6 +203,10 @@ flag{uuid-xxxx-xxxx}
 ## 📚 ROPgadget 简介
 
 ROPgadget 用于查找二进制中的 gadget：
+
+```
+比如本题提供的附件，就可以对其使用ROPgadget
+```
 
 ```bash
 ROPgadget --binary chall
@@ -234,37 +242,33 @@ ROPgadget --binary chall | grep "pop rdi"
 
 ### 🌸 第一阶段
 
-```bash
-nm -n chall | grep win
 ```
-
-输出示例：
+<img width="1172" height="155" alt="image" src="https://github.com/user-attachments/assets/71b7d3ce-2a66-4349-ba13-c7c49908bced" />
 
 ```
-0x4011d6
+
+```
+要找的gadget即为0x401207
 ```
 
 ### 🌸 第二阶段
 
-```bash
-ROPgadget --binary chall | grep "pop rdi ; ret"
+```
+<img width="1175" height="226" alt="image" src="https://github.com/user-attachments/assets/84b62eda-85f0-4962-9672-4fe5f516ac56" />
+要找的gadget即为0x401210
+
 ```
 
-选择最干净的一条：
+### 🌸 第三、四阶段
 
 ```
-0x40120b
+<img width="1015" height="74" alt="image" src="https://github.com/user-attachments/assets/95736032-6203-4ccb-9d71-cb39cbce48ed" />
+<img width="937" height="70" alt="image" src="https://github.com/user-attachments/assets/d01febc1-b700-4ef0-9543-c18d801f95a6" />
+要找的gadget为0x2008和0x401221
+
 ```
 
-（避免带 `cli` / `endbr64`）
-
-### 🌸 第三阶段
-
-```bash
-ROPgadget --binary chall | grep "ret"
-```
-
-### 🌸 第四阶段
+### 🌸 第五阶段
 
 按照题目提示完成组合逻辑。
 
@@ -289,13 +293,13 @@ x64 参数通过 rdi 传递
 
 ### 🟢 结局1：未尽之语
 
-- **条件**：中途出错
+- **条件**：中途出错/作答时间过长
 - **结果**：无法看到遗言
 
 ### 🔵 结局2：你从未离去
 
 - **条件**：全部正确
-- **结果**：解锁完整剧情 + 邮件
+- **结果**：解锁完整剧情 + 未发送出去的邮件
 
 ---
 
