@@ -243,7 +243,10 @@ ROPgadget --binary chall | grep "pop rdi"
 ### 🌸 第一阶段
 
 ```
-<img width="1172" height="155" alt="image" src="https://github.com/user-attachments/assets/71b7d3ce-2a66-4349-ba13-c7c49908bced" />
+$ ROPgadget --binary chall | grep "pop rdi ; ret"
+0x000000000040120a : cli ; pop rdi ; ret
+0x0000000000401207 : endbr64 ; pop rdi ; ret
+0x000000000040120b : pop rdi ; ret
 
 ```
 
@@ -254,7 +257,13 @@ ROPgadget --binary chall | grep "pop rdi"
 ### 🌸 第二阶段
 
 ```
-<img width="1175" height="226" alt="image" src="https://github.com/user-attachments/assets/84b62eda-85f0-4962-9672-4fe5f516ac56" />
+$ ROPgadget --binary chall | grep "pop rsi ; ret"
+0x0000000000401213 : cli ; pop rsi ; ret
+0x0000000000401210 : endbr64 ; pop rsi ; ret
+0x000000000040120d : nop ; ud2 ; endbr64 ; pop rsi ; ret
+0x0000000000401214 : pop rsi ; ret
+0x000000000040120e : ud2 ; endbr64 ; pop rsi ; ret
+
 要找的gadget即为0x401210
 
 ```
@@ -262,8 +271,13 @@ ROPgadget --binary chall | grep "pop rdi"
 ### 🌸 第三、四阶段
 
 ```
-<img width="1015" height="74" alt="image" src="https://github.com/user-attachments/assets/95736032-6203-4ccb-9d71-cb39cbce48ed" />
-<img width="937" height="70" alt="image" src="https://github.com/user-attachments/assets/d01febc1-b700-4ef0-9543-c18d801f95a6" />
+$ strings -tx chall | grep "white_lily"
+   2008 white_lily
+
+
+$ nm -n chall | grep "visit_ward"
+0000000000401221 T visit_ward
+
 要找的gadget为0x2008和0x401221
 
 ```
@@ -313,9 +327,10 @@ flag{WHITE_LILLY_xxxxxxxx}
 
 ## 🎁 彩蛋
 
-45秒后触发：
+获取flag45秒后未关闭终端将会触发出题人设置的彩蛋：
 
 ```
 嗯？
 你还没有走吗？
+......
 ```
