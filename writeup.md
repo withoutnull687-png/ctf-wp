@@ -68,8 +68,6 @@ cd SETSUNA
 flag{millsage_intruder_xxxxxxxx}
 ```
 
----
-
 ## 💡 总结
 
 本题核心是：
@@ -77,8 +75,6 @@ flag{millsage_intruder_xxxxxxxx}
 - 模拟终端环境
 - 限制输入行为
 - 防止暴力脚本
-
----
 
 # 🥈 第二题 WP（小祥 追逐战）
 
